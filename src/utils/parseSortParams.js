@@ -5,9 +5,14 @@ const parseSortOrder = (sortOrder) => {
 };
 
 const parseSortBy = (sortBy) => {
-  const keysOfContact = ['_id', 'name', 'phoneNumber', 'email'];
+  const keysOfQuestionnaire = [
+    '_id',
+    'name',
+    'questionsNumber',
+    'completionsNumber',
+  ];
 
-  if (keysOfContact.includes(sortBy)) {
+  if (keysOfQuestionnaire.includes(sortBy)) {
     return sortBy;
   }
 
