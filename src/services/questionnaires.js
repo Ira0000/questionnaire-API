@@ -1,4 +1,5 @@
 import { Questionnaire } from '../db/models/Questionnaire.js';
+import { Response } from '../db/models/Response.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getAllQuestionnaires = async ({
@@ -22,10 +23,22 @@ export const getAllQuestionnaires = async ({
     .sort({ [sortBy]: sortOrder })
     .exec();
 
-  // Add `questionsQuantity` to each questionnaire
+  // Get response counts for each questionnaire
+  const responseCounts = await Response.aggregate([
+    { $group: { _id: '$questionnaire_id', responseCount: { $sum: 1 } } },
+  ]);
+
+  // Convert the response count array into a lookup object
+  const responseCountMap = responseCounts.reduce((acc, curr) => {
+    acc[curr._id.toString()] = curr.responseCount;
+    return acc;
+  }, {});
+
+  // Add `questionsQuantity` and `responseCount` to each questionnaire
   const formattedQuestionnaires = questionnaires.map((q) => ({
     ...q.toObject(),
     questionsQuantity: q.questions.length,
+    responseCount: responseCountMap[q._id.toString()] || 0, // Default to 0 if no responses
   }));
 
   const paginationData = calculatePaginationData(

@@ -1,22 +1,38 @@
-const { Schema, model } = require('mongoose');
+import { model, Schema } from 'mongoose';
 
 const ResponseSchema = new Schema(
   {
-    questionnaireId: {
+    questionnaire_id: {
       type: Schema.Types.ObjectId,
       ref: 'Questionnaire',
       required: true,
     },
-    userId: { type: Schema.Types.ObjectId, required: true },
+    respondent_id: {
+      type: Schema.Types.ObjectId, // Assuming this is a user or respondent ID
+      ref: 'User',
+      required: true,
+    },
     answers: [
       {
-        questionIndex: Number,
-        answer: Schema.Types.Mixed,
+        question_id: {
+          type: Schema.Types.ObjectId,
+          ref: 'Question',
+          required: true,
+        },
+        answer: {
+          type: Schema.Types.Mixed, // Can handle string, number, array for multiple-choice
+          required: true,
+        },
       },
     ],
-    startTime: Date,
-    endTime: Date,
-    duration: Number,
+    completion_time: {
+      type: Number, // Time taken to complete the questionnaire
+      required: true,
+    },
+    submitted_at: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true },
 );

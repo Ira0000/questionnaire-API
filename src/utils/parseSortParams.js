@@ -8,8 +8,8 @@ const parseSortBy = (sortBy) => {
   const keysOfQuestionnaire = [
     '_id',
     'name',
-    'questionsNumber',
-    'completionsNumber',
+    'questionsQuantity',
+    'responseCount',
   ];
 
   if (keysOfQuestionnaire.includes(sortBy)) {

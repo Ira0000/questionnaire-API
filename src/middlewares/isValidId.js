@@ -8,3 +8,11 @@ export const isValidId = (req, res, next) => {
   }
   next();
 };
+
+export const isValidResponseId = (req, res, next) => {
+  const { responseId } = req.params;
+  if (!isValidObjectId(responseId)) {
+    throw createHttpError(400, 'Bad Request');
+  }
+  next();
+};
