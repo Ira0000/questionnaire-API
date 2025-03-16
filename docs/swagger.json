@@ -2,16 +2,16 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Contacts app",
+    "title": "Questionnaire app",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a documentation of Contacts app"
+    "description": "This is a documentation of Questionnaire app"
   },
   "servers": [
     {
-      "url": "https://nodejs-hw-mongodb-hw7-59uq.onrender.com"
+      "url": "relaxed-phylis/questionnaire-api"
     },
     {
       "url": "http://127.0.0.1:8080"
@@ -19,28 +19,23 @@
   ],
   "tags": [
     {
-      "name": "Contacts",
-      "description": "Operations with Contacts"
+      "name": "Questionnaires",
+      "description": "Operations with Questionnaires"
     },
     {
-      "name": "Auth",
-      "description": "Auth operations"
+      "name": "Responses",
+      "description": "Responses operations"
     }
   ],
   "paths": {
-    "/contacts": {
+    "/questionnaires": {
       "get": {
         "tags": [
-          "Contacts"
+          "Questionnaires"
         ],
-        "summary": "Get list of all contacts",
-        "operationId": "getContacts",
-        "description": "Get list of all contacts with this endpoint",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "summary": "Get list of all Questionnaires",
+        "operationId": "getQuestionnaires",
+        "description": "Get list of all Questionnaires with this endpoint",
         "parameters": [
           {
             "in": "query",
@@ -65,7 +60,7 @@
               "type": "string",
               "example": "name"
             },
-            "description": "Contact's fields that can be mentioned: _id, name, phoneNumber, email. Default value - _id"
+            "description": "Questionnaire's fields that can be mentioned: _id, name, questionsQuantity, responseCount. Default value - _id"
           },
           {
             "in": "query",
@@ -78,34 +73,12 @@
               ],
               "example": "asc"
             }
-          },
-          {
-            "in": "query",
-            "name": "type",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "work",
-                "home",
-                "personal"
-              ],
-              "example": "personal"
-            },
-            "description": "Filters contacts according to schema"
-          },
-          {
-            "in": "query",
-            "name": "isFavourite",
-            "schema": {
-              "type": "boolean",
-              "example": false
-            },
-            "description": "Filters contacts according to schema"
           }
         ],
+        "security": [],
         "responses": {
           "200": {
-            "description": "Successfully found contacts!",
+            "description": "Successfully found questionnaires!",
             "content": {
               "application/json": {
                 "schema": {
@@ -122,7 +95,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully found contacts!"
+                      "example": "Successfully found questionnaires!"
                     },
                     "data": {
                       "type": "object",
@@ -139,7 +112,7 @@
                         "data": {
                           "type": "array",
                           "items": {
-                            "$ref": "#/components/schemas/contact"
+                            "$ref": "#/components/schemas/questionnaires"
                           }
                         },
                         "page": {
@@ -180,60 +153,76 @@
       },
       "post": {
         "tags": [
-          "Contacts"
+          "Questionnaires"
         ],
-        "summary": "Create contact",
-        "operationId": "createContact",
-        "description": "Create a contact with payload",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "summary": "Create Questionnaire",
+        "operationId": "createQuestionnaire",
+        "description": "Create a Questionnaire with payload",
         "requestBody": {
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "name",
-                  "phoneNumber",
-                  "contactType"
-                ],
-                "properties": {
-                  "name": {
-                    "description": "Contact's name",
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "phoneNumber": {
-                    "description": "Contact's phone number",
-                    "type": "string",
-                    "example": "+380 509 090 909"
-                  },
-                  "email": {
-                    "description": "Contact's email",
-                    "type": "string",
-                    "example": "Mary@gmail.com"
-                  },
-                  "isFavourite": {
-                    "description": "Whether is contact favourite",
-                    "type": "boolean",
-                    "example": false
-                  },
-                  "contactType": {
-                    "description": "Contacts type",
-                    "type": "string",
-                    "enum": [
-                      "work",
-                      "home",
-                      "personal"
-                    ]
-                  },
-                  "photo": {
-                    "description": "Contact's photo",
-                    "type": "string",
-                    "format": "binary"
+            "application/json": null,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "questions"
+              ],
+              "properties": {
+                "name": {
+                  "description": "Name of the questionnaire.",
+                  "type": "string",
+                  "example": "Customer Satisfaction Survey",
+                  "minLength": 3,
+                  "maxLength": 100
+                },
+                "description": {
+                  "description": "Description of the questionnaire.",
+                  "type": "string",
+                  "example": "Gather feedback to improve our services.",
+                  "minLength": 3,
+                  "maxLength": 200
+                },
+                "questions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "text"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "text",
+                          "single-choice",
+                          "multiple-choice"
+                        ],
+                        "description": "Type of question.",
+                        "example": "single-choice"
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "Question text.",
+                        "example": "How satisfied are you with our product?",
+                        "minLength": 3,
+                        "maxLength": 300
+                      },
+                      "options": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Options for single-choice and multiple-choice questions.",
+                        "example": [
+                          "Very Satisfied",
+                          "Satisfied",
+                          "Neutral",
+                          "Dissatisfied"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -242,7 +231,7 @@
         },
         "responses": {
           "201": {
-            "description": "Creates a contact",
+            "description": "Questionnaire created successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -259,11 +248,10 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully created a contact!"
+                      "example": "Questionnaire created successfully!"
                     },
                     "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/contact"
+                      "$ref": "#/components/schemas/questionnaires"
                     }
                   }
                 }
@@ -272,300 +260,6 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
-        }
-      }
-    },
-    "/contacts/{id}": {
-      "get": {
-        "tags": [
-          "Contacts"
-        ],
-        "summary": "Get contact by id",
-        "operationId": "getContact",
-        "description": "Get contact by id",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": ":contactId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "675c18e78827cedae1f61afd"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully  Get contact by id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found contact with id 675c18e78827cedae1f61afd!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/contact"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Contacts"
-        ],
-        "summary": "Delete contact by id",
-        "operationId": "deleteContact",
-        "description": "Fnd contact by id and delete",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": ":contactId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "675c18e78827cedae1f61afd"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Request has been successfully completed, but no response payload body will be present"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Contacts"
-        ],
-        "summary": "Update contact by id",
-        "operationId": "updateContact",
-        "description": "Find contact by id and update",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": ":contactId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "675c18e78827cedae1f61afd"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "description": "Contact's name",
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "phoneNumber": {
-                    "description": "Contact's phone number",
-                    "type": "string",
-                    "example": "+380 509 090 909"
-                  },
-                  "email": {
-                    "description": "Contact's email",
-                    "type": "string",
-                    "example": "Mary@gmail.com"
-                  },
-                  "isFavourite": {
-                    "description": "Whether is contact favourite",
-                    "type": "boolean",
-                    "example": false
-                  },
-                  "contactType": {
-                    "description": "Contacts type",
-                    "type": "string",
-                    "enum": [
-                      "work",
-                      "home",
-                      "personal"
-                    ]
-                  },
-                  "photo": {
-                    "description": "Contact's photo",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Updates a contact",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully patched a contact!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/contact"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Login user",
-        "operationId": "loginUser",
-        "description": "Login user with payload",
-        "security": [
-          {}
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
-                "properties": {
-                  "email": {
-                    "description": "Registered user email",
-                    "type": "string",
-                    "example": "Mary@gmail.com"
-                  },
-                  "password": {
-                    "description": "Registered user password",
-                    "type": "string",
-                    "example": "qwerty"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully logged in an user!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "required": [
-                        "accessToken"
-                      ],
-                      "properties": {
-                        "accessToken": {
-                          "description": "users accessToken",
-                          "type": "string",
-                          "example": "q2VJhOMY4wZoE9/eWsJTn1h0HfSDpOq1rvZCy7n6"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -576,45 +270,29 @@
         }
       }
     },
-    "/auth/logout": {
-      "post": {
+    "/questionnaires/{id}": {
+      "get": {
         "tags": [
-          "Auth"
+          "Questionnaires"
         ],
-        "summary": "Logout user",
-        "operationId": "logoutUser",
-        "description": "Logout user",
-        "security": [
+        "summary": "Get questionnaire by ID",
+        "operationId": "getQuestionnaireById",
+        "description": "Get a questionnaire by its ID.",
+        "parameters": [
           {
-            "cookieAuth": []
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Request has been successfully completed, but no response payload body will be present"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Refresh user's session",
-        "operationId": "refreshUserSession",
-        "description": "refresh User Session",
-        "security": [
-          {
-            "cookieAuth": []
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65e4decdd286b30065d54af9"
+            },
+            "description": "The ID of the questionnaire to retrieve."
           }
         ],
         "responses": {
           "200": {
-            "description": "Session refreshed",
+            "description": "Questionnaire retrieved successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -631,18 +309,138 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully refreshed a session!"
+                      "example": "Questionnaire retrieved successfully."
                     },
                     "data": {
+                      "$ref": "#/components/schemas/questionnaires"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "summary": "Delete questionnaire by ID",
+        "operationId": "deleteQuestionnaire",
+        "description": "Delete a questionnaire by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65e4decdd286b30065d54af9"
+            },
+            "description": "The ID of the questionnaire to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Questionnaire deleted successfully."
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Questionnaires"
+        ],
+        "summary": "Update questionnaire by ID",
+        "operationId": "updateQuestionnaire",
+        "description": "Update a questionnaire by its ID (partial update).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65e4decdd286b30065d54af9"
+            },
+            "description": "The ID of the questionnaire to update."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Name of the questionnaire.",
+                    "type": "string",
+                    "example": "Updated Customer Feedback Survey",
+                    "minLength": 3,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "description": "Description of the questionnaire.",
+                    "type": "string",
+                    "example": "Updated description of the feedback survey.",
+                    "minLength": 3,
+                    "maxLength": 200
+                  },
+                  "questions": {
+                    "type": "array",
+                    "items": {
                       "type": "object",
-                      "required": [
-                        "accessToken"
-                      ],
                       "properties": {
-                        "accessToken": {
-                          "description": "refreshed users accessToken",
+                        "type": {
                           "type": "string",
-                          "example": "q2VJhOMY4wZoE9/eWsJTn1h0HfSDpOq1rvZCy7n6"
+                          "enum": [
+                            "text",
+                            "single-choice",
+                            "multiple-choice"
+                          ],
+                          "description": "Type of question.",
+                          "example": "multiple-choice"
+                        },
+                        "text": {
+                          "type": "string",
+                          "description": "Question text.",
+                          "example": "Updated question text.",
+                          "minLength": 3,
+                          "maxLength": 300
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Options for single-choice and multiple-choice questions.",
+                          "example": [
+                            "Updated Option 1",
+                            "Updated Option 2"
+                          ]
                         }
                       }
                     }
@@ -650,49 +448,107 @@
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Questionnaire updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Questionnaire updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/questionnaires"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "401": {
-            "$ref": "#/components/responses/401"
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
     },
-    "/auth/register": {
+    "/responses": {
       "post": {
         "tags": [
-          "Auth"
+          "Responses"
         ],
-        "summary": "Register user",
-        "operationId": "registerUser",
-        "description": "Register user with payload",
-        "security": [
-          {}
-        ],
+        "summary": "Submit a questionnaire response",
+        "operationId": "createResponse",
+        "description": "Submit a completed questionnaire response.",
+        "security": [],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "name",
-                  "email",
-                  "password"
+                  "questionnaire_id",
+                  "respondent_id",
+                  "answers",
+                  "completion_time"
                 ],
                 "properties": {
-                  "name": {
-                    "description": "User's name",
+                  "questionnaire_id": {
                     "type": "string",
-                    "example": "John Doe"
+                    "description": "ID of the questionnaire.",
+                    "example": "65e4decdd286b30065d54af9"
                   },
-                  "email": {
-                    "description": "User's email",
+                  "respondent_id": {
                     "type": "string",
-                    "example": "Mary@gmail.com"
+                    "description": "ID of the respondent.",
+                    "example": "65e4dedd286b30065d54af0"
                   },
-                  "password": {
-                    "description": "User`s password",
-                    "type": "string",
-                    "example": "qwerty"
+                  "answers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "question_id",
+                        "answer"
+                      ],
+                      "properties": {
+                        "question_id": {
+                          "type": "string",
+                          "description": "ID of the question.",
+                          "example": "65e4dfdd286b30065d54af1"
+                        },
+                        "answer": {
+                          "type": "object",
+                          "description": "Respondent's answer (string, number, array).",
+                          "example": "Answer text"
+                        }
+                      }
+                    }
+                  },
+                  "completion_time": {
+                    "type": "integer",
+                    "description": "Time taken to complete the questionnaire (in milliseconds).",
+                    "example": 300000
                   }
                 }
               }
@@ -701,7 +557,7 @@
         },
         "responses": {
           "201": {
-            "description": "Creates a user",
+            "description": "Successfully created a response!",
             "content": {
               "application/json": {
                 "schema": {
@@ -718,11 +574,10 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully registered a user!"
+                      "example": "Response submitted successfully!"
                     },
                     "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/user"
+                      "$ref": "#/components/schemas/response"
                     }
                   }
                 }
@@ -732,51 +587,36 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "409": {
-            "$ref": "#/components/responses/409"
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
     },
-    "/auth/reset-pwd": {
-      "post": {
+    "/responses/{id}": {
+      "get": {
         "tags": [
-          "Auth"
+          "Responses"
         ],
-        "summary": "Reset password",
-        "operationId": "resetPassword",
-        "description": "Reset password according to info in payload",
-        "security": [
-          {}
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "password",
-                  "token"
-                ],
-                "properties": {
-                  "password": {
-                    "description": "New password to the user account",
-                    "type": "string",
-                    "example": 12345678
-                  },
-                  "token": {
-                    "description": "Token which was sent to email",
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzZlYWVhYjBhMDdmYjNlYWY3MTdkZWIiLCJlbWFpbCI6ImxvcGF0eXNpY2hrQGdtYWlsLmNvbSIsImlhdCI6MTczNTg5OTU5MiwiZXhwIjoxNzM1ODk5ODkyfQ.yx6u7J9C9MGnF7SEmiHdE83_B-w7NyzTMmxXcOmZM6k"
-                  }
-                }
-              }
-            }
+        "summary": "Get response by ID",
+        "operationId": "getResponseById",
+        "description": "Get a questionnaire response by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65e4e0dd286b30065d54af2"
+            },
+            "description": "The ID of the response to retrieve."
           }
-        },
+        ],
+        "security": [],
         "responses": {
           "200": {
-            "description": "Password was updated",
+            "description": "Response retrieved successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -793,197 +633,192 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Password has been successfully reset."
+                      "example": "Response retrieved successfully."
                     },
                     "data": {
-                      "type": "object"
+                      "$ref": "#/components/schemas/response"
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
-        }
-      }
-    },
-    "/auth/send-reset-email": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Send reset password email, when password forgotten",
-        "operationId": "requestResetEmail",
-        "description": "Send rest password email to email in payload",
-        "security": [
-          {}
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email"
-                ],
-                "properties": {
-                  "email": {
-                    "description": "Email of registered user who forgot password",
-                    "type": "string",
-                    "example": "Mary@gmail.com"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Reset email sent",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Reset password email was successfully sent!"
-                    },
-                    "data": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
           },
           "404": {
             "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      },
-      "cookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "sessionId"
-      }
-    },
+    "securitySchemes": {},
     "schemas": {
-      "contact": {
+      "questionnaires": {
         "type": "object",
         "required": [
           "_id",
           "name",
-          "phoneNumber",
-          "contactType",
-          "userId"
+          "description",
+          "questions"
         ],
         "properties": {
           "_id": {
-            "description": "Contact's id",
+            "description": "Questionnaire's unique identifier",
             "type": "string",
             "example": "65e4decdd286b30065d54af9"
           },
           "name": {
-            "description": "Contact's name",
+            "description": "Questionnaire's name",
             "type": "string",
-            "example": "John Doe"
+            "example": "Customer Feedback Survey",
+            "minLength": 3,
+            "maxLength": 100
           },
-          "phoneNumber": {
-            "description": "Contact's phone number",
+          "description": {
+            "description": "Questionnaire's description",
             "type": "string",
-            "example": "+380 509 090 909"
+            "example": "Gather feedback from our customers.",
+            "minLength": 3,
+            "maxLength": 200
           },
-          "email": {
-            "description": "Contact's email",
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "text"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "text",
+                    "single-choice",
+                    "multiple-choice"
+                  ],
+                  "description": "Type of question",
+                  "example": "single-choice"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Question text",
+                  "example": "How satisfied are you with our product?",
+                  "minLength": 3,
+                  "maxLength": 300
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Options for single-choice and multiple-choice questions",
+                  "example": [
+                    "Very Satisfied",
+                    "Satisfied",
+                    "Neutral",
+                    "Dissatisfied"
+                  ]
+                }
+              }
+            }
+          },
+          "createdAt": {
             "type": "string",
-            "example": "Mary@gmail.com"
+            "format": "date-time",
+            "description": "Timestamp when the questionnaire was created",
+            "example": "2024-03-09T12:00:00Z"
           },
-          "photo": {
-            "description": "Link to contact's photo",
+          "updatedAt": {
             "type": "string",
-            "example": "https://res.cloudinary.com/uqwgdu/image/upload/image.png"
+            "format": "date-time",
+            "description": "Timestamp when the questionnaire was last updated",
+            "example": "2024-03-09T13:30:00Z"
           },
-          "isFavourite": {
-            "description": "Whether is contact favourite",
-            "type": "boolean",
-            "example": false
+          "questionsQuantity": {
+            "type": "integer",
+            "description": "Number of questions in the questionnaire",
+            "example": 5
           },
-          "contactType": {
-            "description": "Contacts type",
-            "type": "string",
-            "enum": [
-              "work",
-              "home",
-              "personal"
-            ]
-          },
-          "userId": {
-            "description": "Contact's user id",
-            "type": "string",
-            "example": "65e4decdd286b30065d54af9"
+          "responseCount": {
+            "type": "integer",
+            "description": "Number of responses received for the questionnaire",
+            "example": 1
           }
         }
       },
-      "user": {
+      "response": {
         "type": "object",
         "required": [
           "_id",
-          "name",
-          "email",
-          "createdAt",
-          "updatedAt"
+          "questionnaire_id",
+          "respondent_id",
+          "answers",
+          "completion_time"
         ],
         "properties": {
           "_id": {
-            "description": "User's id",
             "type": "string",
-            "example": "6777ab65fe4bdfeeaf100cdh"
+            "description": "Response's unique identifier.",
+            "example": "65e4e0dd286b30065d54af2"
           },
-          "name": {
-            "description": "User's name",
+          "questionnaire_id": {
             "type": "string",
-            "example": "John Doe"
+            "description": "ID of the questionnaire.",
+            "example": "65e4decdd286b30065d54af9"
           },
-          "email": {
-            "description": "User's email",
+          "respondent_id": {
             "type": "string",
-            "example": "Mary@gmail.com"
+            "description": "ID of the respondent.",
+            "example": "65e4dedd286b30065d54af0"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "question_id",
+                "answer"
+              ],
+              "properties": {
+                "question_id": {
+                  "type": "string",
+                  "description": "ID of the question.",
+                  "example": "65e4dfdd286b30065d54af1"
+                },
+                "answer": {
+                  "type": "object",
+                  "description": "Respondent's answer (string, number, array).",
+                  "example": "Answer text"
+                }
+              }
+            }
+          },
+          "completion_time": {
+            "type": "integer",
+            "description": "Time taken to complete the questionnaire (in milliseconds).",
+            "example": 300000
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the response was submitted.",
+            "example": "2024-03-10T10:00:00Z"
           },
           "createdAt": {
-            "description": "Date of user creation",
-            "type": "Date",
-            "example": "2025-01-03T09:18:29.522Z"
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the response was created.",
+            "example": "2024-03-10T10:00:00Z"
           },
           "updatedAt": {
-            "description": "Date of updating user info",
-            "type": "Date",
-            "example": "2025-01-03T09:18:29.522Z"
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the response was last updated.",
+            "example": "2024-03-10T10:05:00Z"
           }
         }
       }
@@ -1092,43 +927,6 @@
                     "message": {
                       "type": "string",
                       "example": "Contact not found"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "409": {
-        "description": "Conflict error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 409
-                },
-                "message": {
-                  "type": "string",
-                  "example": "ConflictError"
-                },
-                "data": {
-                  "type": "object",
-                  "required": [
-                    "message"
-                  ],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Email in use"
                     }
                   }
                 }

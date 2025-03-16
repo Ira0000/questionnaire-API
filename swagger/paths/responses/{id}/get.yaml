@@ -1,0 +1,38 @@
+tags:
+  - Responses
+summary: Get response by ID
+operationId: getResponseById
+description: 'Get a questionnaire response by its ID.'
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '65e4e0dd286b30065d54af2'
+    description: 'The ID of the response to retrieve.'
+security: []
+responses:
+  '200':
+    description: 'Response retrieved successfully.'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Response retrieved successfully.'
+            data:
+              $ref: '../../../components/schemas/response.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

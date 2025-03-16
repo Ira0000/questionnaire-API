@@ -1,0 +1,70 @@
+tags:
+  - Responses
+summary: Submit a questionnaire response
+operationId: createResponse
+description: 'Submit a completed questionnaire response.'
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - questionnaire_id
+          - respondent_id
+          - answers
+          - completion_time
+        properties:
+          questionnaire_id:
+            type: string
+            description: 'ID of the questionnaire.'
+            example: '65e4decdd286b30065d54af9'
+          respondent_id:
+            type: string
+            description: 'ID of the respondent.'
+            example: '65e4dedd286b30065d54af0'
+          answers:
+            type: array
+            items:
+              type: object
+              required:
+                - question_id
+                - answer
+              properties:
+                question_id:
+                  type: string
+                  description: 'ID of the question.'
+                  example: '65e4dfdd286b30065d54af1'
+                answer:
+                  type: object # Use object for mixed data types
+                  description: "Respondent's answer (string, number, array)."
+                  example: 'Answer text'
+          completion_time:
+            type: integer
+            description: 'Time taken to complete the questionnaire (in milliseconds).'
+            example: 300000
+responses:
+  '201':
+    description: 'Successfully created a response!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Response submitted successfully!'
+            data:
+              $ref: '../../components/schemas/response.yaml'
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

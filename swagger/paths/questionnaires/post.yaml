@@ -1,0 +1,82 @@
+tags:
+  - Questionnaires
+summary: Create Questionnaire
+operationId: createQuestionnaire
+description: 'Create a Questionnaire with payload'
+requestBody:
+  content:
+    application/json:
+    schema:
+      type: object
+      required:
+        - name
+        - description
+        - questions
+      properties:
+        name:
+          description: 'Name of the questionnaire.'
+          type: string
+          example: 'Customer Satisfaction Survey'
+          minLength: 3
+          maxLength: 100
+        description:
+          description: 'Description of the questionnaire.'
+          type: string
+          example: 'Gather feedback to improve our services.'
+          minLength: 3
+          maxLength: 200
+        questions:
+          type: array
+          items:
+            type: object
+            required:
+              - type
+              - text
+            properties:
+              type:
+                type: string
+                enum:
+                  - 'text'
+                  - 'single-choice'
+                  - 'multiple-choice'
+                description: 'Type of question.'
+                example: 'single-choice'
+              text:
+                type: string
+                description: 'Question text.'
+                example: 'How satisfied are you with our product?'
+                minLength: 3
+                maxLength: 300
+              options:
+                type: array
+                items:
+                  type: string
+                description: 'Options for single-choice and multiple-choice questions.'
+                example:
+                  ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied']
+responses:
+  '201':
+    description: 'Questionnaire created successfully.'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Questionnaire created successfully!'
+            data:
+              $ref: '../../components/schemas/questionnaires.yaml' #Reference to your Questionnaire Schema
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

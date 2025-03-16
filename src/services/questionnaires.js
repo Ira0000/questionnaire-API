@@ -55,6 +55,11 @@ export const getAllQuestionnaires = async ({
 
 export const getQuestionnaireById = async (questionnaireId) => {
   const questionnaire = await Questionnaire.findOne({ _id: questionnaireId });
+
+  if (!questionnaire) {
+    return null;
+  }
+
   return {
     ...questionnaire.toObject(),
     questionsQuantity: questionnaire.questions.length,
