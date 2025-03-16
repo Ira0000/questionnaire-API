@@ -1,0 +1,55 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: 'Login user with payload'
+security:
+  - {}
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: 'Registered user email'
+            type: string
+            example: Mary@gmail.com
+          password:
+            description: 'Registered user password'
+            type: string
+            example: qwerty
+responses:
+  '200':
+    description: User logged in
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully logged in an user!
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  description: 'users accessToken'
+                  type: string
+                  example: q2VJhOMY4wZoE9/eWsJTn1h0HfSDpOq1rvZCy7n6
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

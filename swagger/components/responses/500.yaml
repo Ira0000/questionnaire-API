@@ -1,0 +1,26 @@
+# swagger/components/responses/500.yaml
+
+description: Internal Server Error
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: Something went wrong
+        data:
+          type: object
+          required:
+            - message
+          properties:
+            message:
+              type: string
+              example: 'Expected double-quoted property name in JSON at position 45'

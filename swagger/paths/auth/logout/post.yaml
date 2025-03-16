@@ -1,0 +1,12 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: logoutUser
+description: 'Logout user'
+security:
+  - cookieAuth: []
+responses:
+  '204':
+    description: 'Request has been successfully completed, but no response payload body will be present'
+  '401':
+    $ref: '../../../components/responses/401.yaml'

@@ -1,0 +1,23 @@
+tags:
+  - Contacts
+summary: Delete contact by id
+operationId: deleteContact
+description: 'Fnd contact by id and delete'
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: :contactId
+    required: true
+    schema:
+      type: string
+      example: '675c18e78827cedae1f61afd'
+responses:
+  '204':
+    description: 'Request has been successfully completed, but no response payload body will be present'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '400':
+    $ref: '../../../components/responses/400.yaml'
