@@ -1,0 +1,84 @@
+#/swagger/paths/questionnaires/{id}/patch.yaml
+
+tags:
+  - Questionnaires
+summary: Update questionnaire by ID
+operationId: updateQuestionnaire
+description: 'Update a questionnaire by its ID (partial update).'
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '65e4decdd286b30065d54af9'
+    description: 'The ID of the questionnaire to update.'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            description: 'Name of the questionnaire.'
+            type: string
+            example: 'Updated Customer Feedback Survey'
+            minLength: 3
+            maxLength: 100
+          description:
+            description: 'Description of the questionnaire.'
+            type: string
+            example: 'Updated description of the feedback survey.'
+            minLength: 3
+            maxLength: 200
+          questions:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - 'text'
+                    - 'single-choice'
+                    - 'multiple-choice'
+                  description: 'Type of question.'
+                  example: 'multiple-choice'
+                text:
+                  type: string
+                  description: 'Question text.'
+                  example: 'Updated question text.'
+                  minLength: 3
+                  maxLength: 300
+                options:
+                  type: array
+                  items:
+                    type: string
+                  description: 'Options for single-choice and multiple-choice questions.'
+                  example: ['Updated Option 1', 'Updated Option 2']
+responses:
+  '200':
+    description: 'Questionnaire updated successfully.'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Questionnaire updated successfully!'
+            data:
+              $ref: '../../../components/schemas/questionnaires.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '400':
+    $ref: '../../../components/responses/400.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

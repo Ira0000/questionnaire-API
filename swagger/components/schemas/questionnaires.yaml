@@ -1,0 +1,71 @@
+# swagger/components/schemas/questionnaires.yaml
+
+type: object
+required:
+  - _id
+  - name
+  - description
+  - questions
+properties:
+  _id:
+    description: "Questionnaire's unique identifier"
+    type: string
+    example: '65e4decdd286b30065d54af9'
+  name:
+    description: "Questionnaire's name"
+    type: string
+    example: 'Customer Feedback Survey'
+    minLength: 3
+    maxLength: 100
+  description:
+    description: "Questionnaire's description"
+    type: string
+    example: 'Gather feedback from our customers.'
+    minLength: 3
+    maxLength: 200
+  questions:
+    type: array
+    items:
+      type: object
+      required:
+        - type
+        - text
+      properties:
+        type:
+          type: string
+          enum:
+            - 'text'
+            - 'single-choice'
+            - 'multiple-choice'
+          description: 'Type of question'
+          example: 'single-choice'
+        text:
+          type: string
+          description: 'Question text'
+          example: 'How satisfied are you with our product?'
+          minLength: 3
+          maxLength: 300
+        options:
+          type: array
+          items:
+            type: string
+          description: 'Options for single-choice and multiple-choice questions'
+          example: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied']
+  createdAt:
+    type: string
+    format: date-time
+    description: 'Timestamp when the questionnaire was created'
+    example: '2024-03-09T12:00:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: 'Timestamp when the questionnaire was last updated'
+    example: '2024-03-09T13:30:00Z'
+  questionsQuantity:
+    type: integer
+    description: 'Number of questions in the questionnaire'
+    example: 5
+  responseCount:
+    type: integer
+    description: 'Number of responses received for the questionnaire'
+    example: 1

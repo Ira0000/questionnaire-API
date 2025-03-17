@@ -16,16 +16,19 @@ const QuestionSchema = new Schema({
 
   options: {
     type: [String],
+    required: true,
     validate: {
       validator: function (options) {
         // If type is 'single-choice' or 'multiple-choice', options must have at least 2 items
         if (this.type === 'single-choice' || this.type === 'multiple-choice') {
           return Array.isArray(options) && options.length >= 2;
         }
-        return options.length === 0 || options === undefined; // Should be empty for 'text' type
+
+        // If type is 'text', options must be empty (or undefined)
+        return options.length === 0 || options === undefined;
       },
       message:
-        'Options are required for single-choice and multiple-choice questions (at least 2).',
+        'Options are required for single-choice and multiple-choice questions (at least 2), and should be empty for text type questions.',
     },
   },
 });

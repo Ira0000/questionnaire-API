@@ -1,0 +1,55 @@
+type: object
+required:
+  - _id
+  - questionnaire_id
+  - respondent_id
+  - answers
+  - completion_time
+properties:
+  _id:
+    type: string
+    description: "Response's unique identifier."
+    example: '65e4e0dd286b30065d54af2'
+  questionnaire_id:
+    type: string
+    description: 'ID of the questionnaire.'
+    example: '65e4decdd286b30065d54af9'
+  respondent_id:
+    type: string
+    description: 'ID of the respondent.'
+    example: '65e4dedd286b30065d54af0'
+  answers:
+    type: array
+    items:
+      type: object
+      required:
+        - question_id
+        - answer
+      properties:
+        question_id:
+          type: string
+          description: 'ID of the question.'
+          example: '65e4dfdd286b30065d54af1'
+        answer:
+          type: object # Use object for mixed data types
+          description: "Respondent's answer (string, number, array)."
+          example: 'Answer text'
+  completion_time:
+    type: integer
+    description: 'Time taken to complete the questionnaire (in milliseconds).'
+    example: 300000
+  submitted_at:
+    type: string
+    format: date-time
+    description: 'Timestamp when the response was submitted.'
+    example: '2024-03-10T10:00:00Z'
+  createdAt:
+    type: string
+    format: date-time
+    description: 'Timestamp when the response was created.'
+    example: '2024-03-10T10:00:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: 'Timestamp when the response was last updated.'
+    example: '2024-03-10T10:05:00Z'

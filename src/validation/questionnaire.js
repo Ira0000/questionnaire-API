@@ -44,7 +44,9 @@ export const questionnaireValidationSchema = Joi.object({
               'any.required':
                 'Options are required for single-choice and multiple-choice questions.',
             }),
-            otherwise: Joi.forbidden(),
+            otherwise: Joi.array().length(0).required().messages({
+              'array.length': 'Options must be empty for text type questions.',
+            }),
           }),
       }),
     )
@@ -99,7 +101,9 @@ export const questionnairePatchValidationSchema = Joi.object({
               'array.min':
                 'Single-choice and multiple-choice questions require at least two options.',
             }),
-            otherwise: Joi.forbidden(),
+            otherwise: Joi.array().length(0).optional().messages({
+              'array.length': 'Options must be empty for text type questions.',
+            }),
           }),
       }),
     )
