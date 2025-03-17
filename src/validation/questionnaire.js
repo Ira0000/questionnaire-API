@@ -34,20 +34,22 @@ export const questionnaireValidationSchema = Joi.object({
           'string.max': 'Question text must be at most 300 characters.',
         }),
 
-        options: Joi.array()
-          .items(Joi.string().trim().min(1).max(100))
-          .when('type', {
-            is: Joi.string().valid('single-choice', 'multiple-choice'),
-            then: Joi.array().min(2).required().messages({
+        options: Joi.alternatives().conditional('type', {
+          is: Joi.string().valid('single-choice', 'multiple-choice'),
+          then: Joi.array()
+            .items(Joi.string().trim().min(1).max(100))
+            .min(2)
+            .required()
+            .messages({
               'array.min':
                 'Single-choice and multiple-choice questions require at least two options.',
               'any.required':
                 'Options are required for single-choice and multiple-choice questions.',
             }),
-            otherwise: Joi.array().length(0).required().messages({
-              'array.length': 'Options must be empty for text type questions.',
-            }),
+          otherwise: Joi.forbidden().messages({
+            'any.unknown': 'Options are not allowed for text type questions.',
           }),
+        }),
       }),
     )
     .min(1)
@@ -92,19 +94,20 @@ export const questionnairePatchValidationSchema = Joi.object({
           'string.max': 'Question text must be at most 300 characters.',
         }),
 
-        options: Joi.array()
-          .items(Joi.string().trim().min(1).max(100))
-          .optional()
-          .when('type', {
-            is: Joi.string().valid('single-choice', 'multiple-choice'),
-            then: Joi.array().min(2).optional().messages({
+        options: Joi.alternatives().conditional('type', {
+          is: Joi.string().valid('single-choice', 'multiple-choice'),
+          then: Joi.array()
+            .items(Joi.string().trim().min(1).max(100))
+            .min(2)
+            .optional()
+            .messages({
               'array.min':
                 'Single-choice and multiple-choice questions require at least two options.',
             }),
-            otherwise: Joi.array().length(0).optional().messages({
-              'array.length': 'Options must be empty for text type questions.',
-            }),
+          otherwise: Joi.forbidden().messages({
+            'any.unknown': 'Options are not allowed for text type questions.',
           }),
+        }),
       }),
     )
     .optional()
